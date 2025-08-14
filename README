@@ -1,0 +1,48 @@
+# Furko – Simple Invoice Management API
+
+Furko is a lightweight, modular backend system for managing invoices and customers.  
+Built with **Java**, **Spring Boot**, **Hibernate**, and **PostgreSQL**, this project is designed for learning professional backend development – from REST APIs to testing and clean architecture.
+
+## 🔧 Technologies Used
+
+- Java 17
+- Spring Boot
+- Spring Data JPA (Hibernate)
+- PostgreSQL
+- Maven
+- RESTful API
+- JUnit 5
+- ModelMapper (optional for DTO mapping)
+- Bean Validation (JSR-380)
+
+## 📦 Features (MVP)
+
+- CRUD operations for customers
+- CRUD operations for invoices
+- Invoice status management (Open, Paid, Overdue)
+- Validation of inputs (e.g. required fields, email format)
+- Exception handling with global error responses
+- Modular project structure (Controller - Service - Repository)
+- Unit testing with JUnit
+
+## 🎯 Goal
+
+This project was created to improve my backend development skills and to apply my background in accounting and finance in a technical context.  
+It serves both as a **learning platform** and a **portfolio project**.
+
+## 💡 Coming Soon (Optional Features)
+
+- PDF generation of invoices
+- E-Mail delivery of invoices
+- Basic authentication (Spring Security)
+- Frontend integration (Thymeleaf or React)
+- Dockerization for deployment
+
+## 👤 About Me
+
+Hi, I'm Furkan – a finance professional on the journey to becoming a full-stack developer.  
+Furko is part of my learning path and job search preparation. I hope it inspires or helps others, too!
+
+📧 Check out my other projects on [GitHub](https://github.com/FurkanK98)
+
+---
