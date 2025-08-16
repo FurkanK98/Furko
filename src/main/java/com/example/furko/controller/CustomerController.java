@@ -1,17 +1,12 @@
 package com.example.furko.controller;
 
 import com.example.furko.dto.CustomerDTO;
-import com.example.furko.dto.JwtResponse;
-import com.example.furko.dto.LoginRequest;
 import com.example.furko.entity.Customer;
 import com.example.furko.service.CustomerService;
-import com.example.furko.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.example.furko.utils.JwtUtil;
 
 import java.util.List;
 
@@ -20,7 +15,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomerController {
     private final CustomerService customerService;
-    private final UserService userService;
 
     @GetMapping
     public ResponseEntity<List<Customer>> getAllCustomers() {
@@ -44,21 +38,6 @@ public class CustomerController {
                 .build();
 
         return ResponseEntity.ok(customerService.saveCustomer(customer));
-    }
-
-    @PostMapping("/api/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        boolean validUser = userService.checkCredentials(loginRequest.getUsername(), loginRequest.getPassword());
-
-        if(!validUser) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Ungültige Anmeldedaten");
-        }
-
-        // Token generieren
-        String token = JwtUtil.generateToken(loginRequest.getUsername());
-
-        // Token zurückgeben
-        return ResponseEntity.ok(new JwtResponse(token));
     }
 
     @PutMapping("/{id}")
