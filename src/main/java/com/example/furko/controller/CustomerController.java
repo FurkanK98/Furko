@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import utils.JwtUtil;
+import com.example.furko.utils.JwtUtil;
 
 import java.util.List;
 

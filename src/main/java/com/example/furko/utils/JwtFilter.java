@@ -1,4 +1,4 @@
-package utils;
+package com.example.furko.utils;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
