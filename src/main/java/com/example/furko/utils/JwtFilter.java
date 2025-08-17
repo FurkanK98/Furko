@@ -11,6 +11,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -35,15 +36,21 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(7); // "Bearer "wird abgeschnitten, nur der Token bleibt.
         String username = JwtUtil.validateTokenAndGetUsername(token); // Token wird mit dem User gematched.
+        List<String> roles = JwtUtil.getRolesFromToken(token);
 
         // 3. Token validieren
-        if(username != null) {
+        if(username != null && roles != null) {
             // 4. User im SecurityContext speichern. (User ist ab hier eingeloggt)
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // RBAC - Role-Based Access Control
+            if(path.startsWith("/api/customers/admin") && !roles.contains("ROLE_ADMIN")) {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                return;
+            }
         } else {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Fehlermeldung 401
         }
 
         // 5. Weiter im Filter-Chain

@@ -17,8 +17,13 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @GetMapping
-    public ResponseEntity<List<Customer>> getAllCustomers() {
-        return ResponseEntity.ok(customerService.getAllCustomers());
+    public ResponseEntity<String> getAllCustomers() {
+        return ResponseEntity.ok("Alle Kunden (sichtbar für ROLE_USER und ROLE_ADMIN)");
+    }
+
+    @GetMapping("/admin")
+    public ResponseEntity<String> getAdminData() {
+        return ResponseEntity.ok("Nur sichtbar für ROLE_ADMIN!");
     }
 
     @GetMapping("/{id}")
