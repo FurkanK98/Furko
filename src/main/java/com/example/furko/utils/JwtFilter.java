@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -41,7 +42,15 @@ public class JwtFilter extends OncePerRequestFilter {
         // 3. Token validieren
         if(username != null && roles != null) {
             // 4. User im SecurityContext speichern. (User ist ab hier eingeloggt)
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
+            System.out.println("Eingeloggter User: " + username);
+            System.out.println("Rollen aus dem Token: " + roles);
+            System.out.println("Angefragter Path: " + request.getServletPath());
+
+            var authorities = roles.stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .toList();
+
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             // RBAC - Role-Based Access Control

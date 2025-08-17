@@ -20,7 +20,6 @@ public class JwtUtil {
         return Jwts.builder()
                 .setSubject(username) // Username kommt ins Token
                 .claim("roles", roles) // Rollen hinzufügen
-                .setClaims(Map.of("roles", roles))
                 .setIssuedAt(new Date()) // Token-Erstellungszeit
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // Token läuft nach einer Stunde ab
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
