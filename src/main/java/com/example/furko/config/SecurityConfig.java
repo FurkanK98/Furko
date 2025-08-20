@@ -3,6 +3,7 @@ package com.example.furko.config;
 import com.example.furko.utils.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -21,6 +22,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // CSRF deaktivieren, damit Postman meine Tests nicht blockiert.
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/login").permitAll() // Login darf jeder aufrufen. (Kein Token nötig)
+                        .requestMatchers(HttpMethod.POST, "/api/invoices/**").hasRole("ADMIN")
                         .requestMatchers("/api/**").authenticated() // Alle anderen Endpoints nur mit gültigen Token zugreifbar.
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // JWT-Filter wird VOR dem Standard-Auth-Filter ausgeführt.
