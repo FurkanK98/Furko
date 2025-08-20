@@ -14,25 +14,32 @@ import java.util.List;
 public class PaymentController {
     private final PaymentService paymentService;
 
-    // 1. Alle Zahlungen aufrufen
-    @GetMapping
-    public ResponseEntity<List<Payment>> getAllPayment() {
-        return ResponseEntity.ok(paymentService.getAllPayments());
-    }
-
-    // 2. Einzelne Zahlungen aufrufen
-    @GetMapping("/{id}")
-    public ResponseEntity<Payment> getPayment(@PathVariable Long id) {
-        return ResponseEntity.ok(paymentService.getPayment(id));
-    }
-
-    // 3. Zahlung erstellen
+    // Zahlung erstellen
     @PostMapping("/{invoiceID}")
     public ResponseEntity<Payment> createPayment(@PathVariable Long invoiceID, @RequestBody Payment paymentRequest) {
         return ResponseEntity.ok(paymentService.createPayment(invoiceID, paymentRequest.getAmount(), paymentRequest.getMethod()));
     }
 
-    // 4. Zahlung löschen
+    // Alle Zahlungen abrufen
+    @GetMapping
+    public ResponseEntity<List<Payment>> getAllPayment() {
+        return ResponseEntity.ok(paymentService.getAllPayments());
+    }
+
+    // Alle Zahlungen für eine Rechnung abrufen
+    @GetMapping("invoice/{invoiceID}")
+    public ResponseEntity<List<Payment>> getPaymentsByInvoice(@PathVariable Long invoiceID) {
+        List<Payment> payments = paymentService.getPaymentsByInvoice(invoiceID);
+        return ResponseEntity.ok(payments);
+    }
+
+    // Einzelne Zahlungen abrufen
+    @GetMapping("/{id}")
+    public ResponseEntity<Payment> getPayment(@PathVariable Long id) {
+        return ResponseEntity.ok(paymentService.getPayment(id));
+    }
+
+    // Einzelne Zahlungen löschen
     @DeleteMapping("/{id}")
     public ResponseEntity<Payment> deletePayment(@PathVariable Long id) {
         paymentService.deletePayment(id);

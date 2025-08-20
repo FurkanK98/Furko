@@ -15,17 +15,6 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final InvoiceRepository invoiceRepository;
 
-    // Alle Zahlungen aufrufen
-    public List<Payment> getAllPayments() {
-        return paymentRepository.findAll();
-    }
-
-    // Zahlung aufrufen
-    public Payment getPayment(Long id) {
-        return paymentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Zahlung mit der ID " + id + "wurde nicht gefunden!"));
-    }
-
     public Payment createPayment(Long invoiceID, Double amount, String method) {
         Invoice invoice = invoiceRepository.findById(invoiceID)
                 .orElseThrow(() -> new RuntimeException("Rechnung nicht gefunden!"));
@@ -37,7 +26,7 @@ public class PaymentService {
                 .invoice(invoice)
                 .build();
 
-        // Status der Rechnung auf PAID setzen, wenn der Betrag passt
+        // Status der Rechnung auf "PAID" setzen, wenn der Betrag passt
         if (amount >= invoice.getAmount()) {
             invoice.setStatus("PAID");
             invoiceRepository.save(invoice);
@@ -45,8 +34,24 @@ public class PaymentService {
         return paymentRepository.save(payment);
     }
 
+    public List<Payment> getAllPayments() {
+        return paymentRepository.findAll();
+    }
+
+    public List<Payment> getPaymentsByInvoice(Long invoiceID) {
+        Invoice invoice = invoiceRepository.findById(invoiceID)
+                .orElseThrow(() -> new RuntimeException("Rechnung wurde nicht gefunden!"));
+
+        return paymentRepository.findByInvoice(invoice);
+    }
+
+    public Payment getPayment(Long id) {
+        return paymentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Zahlungs-ID " + id + " wurde nicht gefunden!"));
+    }
+
     public void deletePayment(Long id) {
         Payment payment = paymentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Zahlung mit der ID " + id + " wurde nicht gefunden!"));
+                .orElseThrow(() -> new RuntimeException("Zahlungs-ID " + id + " wurde nicht gefunden!"));
     }
 }
