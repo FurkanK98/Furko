@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -20,14 +19,16 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        // 1. Login-Endpoint explizit freigeben (kein Token nötig)
+        // Login-Endpoint explizit freigeben (kein Token nötig)
         String path = request.getServletPath();
-        if(path.equals("/api/login")) {
+
+        // Swagger & Login-Endpunkte komplett freigeben
+        if (path.equals("/api/login") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.startsWith("swagger-resources") || path.startsWith("/webjars/")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 2. Token aus dem Header holen
+        // Token aus dem Header holen
         String authHeader = request.getHeader("Authorization");
 
         if(authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -39,9 +40,9 @@ public class JwtFilter extends OncePerRequestFilter {
         String username = JwtUtil.validateTokenAndGetUsername(token); // Token wird mit dem User gematched.
         List<String> roles = JwtUtil.getRolesFromToken(token);
 
-        // 3. Token validieren
+        // Token validieren
         if(username != null && roles != null) {
-            // 4. User im SecurityContext speichern. (User ist ab hier eingeloggt)
+            // User im SecurityContext speichern. (User ist ab hier eingeloggt)
             System.out.println("Eingeloggter User: " + username);
             System.out.println("Rollen aus dem Token: " + roles);
             System.out.println("Angefragter Path: " + request.getServletPath());
@@ -53,7 +54,7 @@ public class JwtFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            // RBAC - Role-Based Access Control
+            // RBAC Überprüfung - Role-Based Access Control
             if(path.startsWith("/api/customers/admin") && !roles.contains("ROLE_ADMIN")) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 return;
@@ -62,7 +63,7 @@ public class JwtFilter extends OncePerRequestFilter {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Fehlermeldung 401
         }
 
-        // 5. Weiter im Filter-Chain
+        // Weiter im Filter-Chain
         filterChain.doFilter(request, response);
     }
 }
