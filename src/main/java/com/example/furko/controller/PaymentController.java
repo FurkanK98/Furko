@@ -2,6 +2,7 @@ package com.example.furko.controller;
 
 import com.example.furko.entity.Payment;
 import com.example.furko.service.PaymentService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
+@Tag(name = "Zahlungen", description = "Zahlungen verwalten")
 public class PaymentController {
     private final PaymentService paymentService;
 
