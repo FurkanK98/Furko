@@ -2,15 +2,19 @@ package com.example.furko.controller;
 
 import com.example.furko.entity.Invoice;
 import com.example.furko.service.InvoiceService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j // log
 @RestController
 @RequestMapping("/api/invoices")
 @RequiredArgsConstructor
+@Tag(name = "Rechnungen", description = "Rechnungen verwalten")
 public class InvoiceController {
     private final InvoiceService invoiceService;
 
@@ -23,7 +27,10 @@ public class InvoiceController {
     // 2. Einzelne Rechnung abrufen
     @GetMapping("/{id}")
     public ResponseEntity<Invoice> getInvoice(@PathVariable Long id) {
-        return ResponseEntity.ok(invoiceService.getInvoice(id));
+        log.info("Abfrage für Rechnung mit ID: {}", id);
+        Invoice invoice = invoiceService.getInvoice(id);
+        log.info("Rechnung gefunden: {}", invoice);
+        return ResponseEntity.ok(invoice);
     }
 
     // 3. Neue Rechnung für einen Kunden
