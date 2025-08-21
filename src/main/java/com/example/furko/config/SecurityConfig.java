@@ -18,6 +18,16 @@ public class SecurityConfig {
                         // Login
                         .requestMatchers("/api/login").permitAll() // Login darf jeder aufrufen. (Kein Token nötig)
 
+                        // Swagger/OpenAPI - freier Zugang
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/v3/api-docs",
+                                "/webjars/**",
+                                "/configuration/**"
+                        ).permitAll()
+
                         // Kundenverwaltung
                         .requestMatchers("/api/customers/**").hasRole("ADMIN")
 
