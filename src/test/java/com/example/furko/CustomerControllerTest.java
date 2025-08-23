@@ -79,7 +79,7 @@ class CustomerControllerTest {
                     "name": "Furkan",
                     "email": "furkan@design.de",
                     "phoneNumber": "+49 123 456789",
-                    "address": "Furkan@Test.de"
+                    "address": "Furkanstr. 1, 12345 Teststadt"
                 }
                 """;
 
