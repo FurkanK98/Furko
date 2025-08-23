@@ -11,19 +11,20 @@ import lombok.NoArgsConstructor;
 @Data // Generiert automatisch Getter, Setter, toString, equals und hashCode Methoden für alle Felder der Klasse
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "DTO für Kunden")
 public class CustomerDTO {
-    @NotBlank(message = "Name darf nicht leer sein")
-    @Schema(example = "Furkan Test")
+/*    @NotBlank(message = "Name darf nicht leer sein")
+    @Schema(example = "Furkan Test")*/
     private String name;
 
-    @Email(message = "E-Mail muss gültig sein")
-    @Schema(example = "furkan@test.de")
+/*    @Email(message = "E-Mail muss gültig sein")
+    @Schema(example = "furkan@test.de")*/
     private String email;
 
-    @Size(min = 10, max = 15, message = "Telefonnummer muss zwischen 10 und 15 Zeichen sein")
-    @Schema(example = "+49 123 456789")
+/*    @Size(min = 10, max = 15, message = "Telefonnummer muss zwischen 10 und 15 Zeichen sein")
+    @Schema(example = "+49 123 456789")*/
     private String phoneNumber;
 
-    @Schema(example = "Furkanstr. 17, 12345 Teststadt")
+//    @Schema(example = "Furkanstr. 17, 12345 Teststadt")
     private String address;
 }

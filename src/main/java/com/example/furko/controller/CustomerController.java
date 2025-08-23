@@ -29,8 +29,16 @@ public class CustomerController {
             @ApiResponse(responseCode = "200", description = "Liste erfolgreich geladen", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CustomerDTO.class))),
             @ApiResponse(responseCode = "401", description = "Nicht autorisiert")
     })
-    public ResponseEntity<String> getAllCustomers() {
-        return ResponseEntity.ok("Alle Kunden (sichtbar für ROLE_USER und ROLE_ADMIN");
+    public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
+        List<CustomerDTO> customers = customerService.getAllCustomers()
+                .stream()
+                .map(customer -> new CustomerDTO(
+                        customer.getName(),
+                        customer.getEmail(),
+                        customer.getPhoneNumber(),
+                        customer.getAddress()))
+                .toList();
+                return ResponseEntity.ok(customers);
     }
 
     @GetMapping("/admin")
