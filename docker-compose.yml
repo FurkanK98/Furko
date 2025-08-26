@@ -1,0 +1,42 @@
+# Docker Compose ist dafür da, damit mehrere Container gleichzeitig synchronisiert werden. Mit einem Befehl kann man alles starten und stoppen. (Spring Boot-App & PostgreSQL)
+
+version: '3.9'
+
+services: # Container, die gestartet werden soll
+  postgres:
+    image: postgres:15
+    container_name: furko-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: furkan1998
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  app: # Spring Boot-Container baut das Dockerfile
+    build: .
+    container_name: furko-app
+    ports:
+      - "8080:8080"
+    depends_on: # App startet erst, wenn die Datenbank bereit ist
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: furkan1998
+
+  pgadmin: # Web-UI für PostgreSQL - http://localhost:5050
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@furko.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+
+volumes: # Datenbank-Daten bleiben erhalten, selbst, wenn der Container gelöscht wird
+  postgres-data:
