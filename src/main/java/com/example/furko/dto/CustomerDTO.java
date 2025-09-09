@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Schema(description = "DTO für Kunden")
 public class CustomerDTO {
+    private long id;
+
 /*    @NotBlank(message = "Name darf nicht leer sein")
     @Schema(example = "Furkan Test")*/
     private String name;

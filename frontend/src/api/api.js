@@ -3,7 +3,8 @@ import axios from "axios"; // axios importieren, um HTTP-Requests zu machen
 // Basis-URL für alle API-Requests (Backend-URL)
 const api = axios.create(
     {
-        baseURL: "http://localhost:8080/api",
+        baseURL: "http://localhost:8080",
+        withCredentials: true,
     }
 );
 
@@ -14,7 +15,7 @@ api.interceptors.request.use(
         const token = localStorage.getItem("token"); // Token aus localStorage holen
 
         if(token) {
-            config.headers.Authorization = 'Bearer ${token}'; // Header setzen
+            config.headers.Authorization = `Bearer ${token}`; // Header setzen
         }
         return config; // config zurückgeben
     },

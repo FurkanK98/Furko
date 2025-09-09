@@ -33,6 +33,7 @@ public class CustomerController {
         List<CustomerDTO> customers = customerService.getAllCustomers()
                 .stream()
                 .map(customer -> new CustomerDTO(
+                        customer.getId(),
                         customer.getName(),
                         customer.getEmail(),
                         customer.getPhoneNumber(),

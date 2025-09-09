@@ -13,18 +13,14 @@ export const AuthProvider = ({ children }) => {
     // Login-Funktion: Ruft Backend auf
     const login = async (username, password) => {
         try {
-            // Anfrage an Backend
-            const response = await api.post("/api/login", {username, password});
-
-            // Token aus Response nehmen
+            const response = await api.post("/api/login", {username, password}); // Anfrage an Backend
             const newToken = response.data.token; // Token aus Antwort holen
 
             // Token speichern
             localStorage.setItem("token", newToken); // Token speichern
             setToken(newToken); // State aktualisieren
 
-            // Benutzerinfos
-            if(response.data.token) setUser(response.data.token)
+            setUser({username, role: "ADMIN"});
 
             return true;
         } catch(error) {
@@ -41,8 +37,13 @@ export const AuthProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        if (token) console.log("Token gesetzt: ", token);
-    }, [token]);
+        const savedtoken = localStorage.getItem("token");
+
+        if(savedtoken && !token) {
+            setToken(savedtoken);
+            setUser({username: "persistedUser", role: "ADMIN"});
+        }
+    }, []);
 
     return (
         <AuthContext.Provider value = {{ token, user, login, logout }}>

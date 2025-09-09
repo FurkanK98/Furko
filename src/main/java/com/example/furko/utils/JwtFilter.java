@@ -19,6 +19,11 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        if("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // Login-Endpoint explizit freigeben (kein Token nötig)
         String path = request.getServletPath();
 
@@ -43,9 +48,9 @@ public class JwtFilter extends OncePerRequestFilter {
         // Token validieren
         if(username != null && roles != null) {
             // User im SecurityContext speichern. (User ist ab hier eingeloggt)
-            System.out.println("Eingeloggter User: " + username);
+/*            System.out.println("Eingeloggter User: " + username);
             System.out.println("Rollen aus dem Token: " + roles);
-            System.out.println("Angefragter Path: " + request.getServletPath());
+            System.out.println("Angefragter Path: " + request.getServletPath());*/
 
             var authorities = roles.stream()
                     .map(SimpleGrantedAuthority::new)
