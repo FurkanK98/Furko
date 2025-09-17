@@ -12,6 +12,8 @@ Built with **Java**, **Spring Boot**, **Hibernate**, and **PostgreSQL**, this pr
 - Maven
 - RESTful API
 - JUnit 5
+- React
+- Docker
 - ModelMapper (optional for DTO mapping)
 - Bean Validation (JSR-380)
 
@@ -23,7 +25,20 @@ Built with **Java**, **Spring Boot**, **Hibernate**, and **PostgreSQL**, this pr
 - Validation of inputs (e.g. required fields, email format)
 - Exception handling with global error responses
 - Modular project structure (Controller - Service - Repository)
+- Basic authentication (Spring Security)
 - Unit testing with JUnit
+- Dockerization for deployment
+- Frontend integration (React)
+
+## 📸 Screenshots
+
+Here are some Screenshots of the current Furko Accounting System:
+
+![Login-Page](screenshots/Login.png)
+_Login page with centralized layout and basic authentication using Spring Security_
+
+![Customers-Page](screenshots/Customers.png)
+_Customers management page with CRUD operations (Add, Edit, Delete)_
 
 ## 🎯 Goal
 
@@ -34,9 +49,6 @@ It serves both as a **learning platform** and a **portfolio project**.
 
 - PDF generation of invoices
 - E-Mail delivery of invoices
-- Basic authentication (Spring Security)
-- Frontend integration (Thymeleaf or React)
-- Dockerization for deployment
 
 ## 👤 About Me
 
