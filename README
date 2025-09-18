@@ -19,7 +19,7 @@ Built with **Java**, **Spring Boot**, **Hibernate**, and **PostgreSQL**, this pr
 
 ## 📦 Features (MVP)
 
-- CRUD operations for customers
+- CRUD operations for customersUpdate 'README' with screenshots & project details
 - CRUD operations for invoices
 - Invoice status management (Open, Paid, Overdue)
 - Validation of inputs (e.g. required fields, email format)
@@ -34,10 +34,12 @@ Built with **Java**, **Spring Boot**, **Hibernate**, and **PostgreSQL**, this pr
 
 Here are some Screenshots of the current Furko Accounting System:
 
-![Login-Page](./screenshots/Login.png)
+![Login-Page](screenshots/Login.png)
+
 _Login page with centralized layout and basic authentication using Spring Security_
 
-![Customers-Page](./screenshots/Customers.png)
+![Customers-Page](screenshots/Customers.png)
+
 _Customers management page with CRUD operations (Add, Edit, Delete)_
 
 ## 🎯 Goal
