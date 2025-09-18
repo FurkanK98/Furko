@@ -1,7 +1,7 @@
 # Furko – Simple Invoice Management API
 
 Furko is a lightweight, modular backend system for managing invoices and customers.  
-Built with **Java**, **Spring Boot**, **Hibernate**, and **PostgreSQL**, this project is designed for learning professional backend development – from REST APIs to testing and clean architecture.
+Built with Java, Spring Boot, Hibernate, PostgreSQL and a React Frontend, this project is designed for learning full-stack development – from secure REST APIs to a modern web interface, testing and clean architecture.
 
 ## 🔧 Technologies Used
 
