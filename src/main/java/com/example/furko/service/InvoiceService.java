@@ -32,7 +32,7 @@ public class InvoiceService {
 
     public Invoice getInvoice(Long id) {
         return invoiceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Invoice mit ID " + id + " nicht gefunden!"));
+                .orElseThrow(() -> new RuntimeException("Rechnungsnr. " + id + " nicht gefunden!"));
     }
 
     public Invoice payInvoice(Long id) {
@@ -43,7 +43,9 @@ public class InvoiceService {
     }
 
     public void deleteInvoice(Long id) {
-        Invoice invoice = invoiceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Invoice mit ID " + id + " nicht gefunden!"));
+        if(!invoiceRepository.existsById(id)) {
+            throw new RuntimeException("Rechnungsnr. " + id + " nicht gefunden!");
+        }
+        invoiceRepository.deleteById(id);
     }
 }

@@ -47,11 +47,13 @@ public class PaymentService {
 
     public Payment getPayment(Long id) {
         return paymentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Zahlungs-ID " + id + " wurde nicht gefunden!"));
+                .orElseThrow(() -> new RuntimeException("Zahlungsnr. " + id + " wurde nicht gefunden!"));
     }
 
     public void deletePayment(Long id) {
-        Payment payment = paymentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Zahlungs-ID " + id + " wurde nicht gefunden!"));
+        if(!paymentRepository.existsById(id)) {
+            throw new RuntimeException("Zahlungsnr. " + id + "wurde nicht gefunden!");
+        }
+        paymentRepository.deleteById(id);
     }
 }
