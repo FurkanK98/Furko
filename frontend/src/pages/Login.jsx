@@ -15,93 +15,56 @@ const Login = () => {
         const success = await login(username, password); // Login-Funktion aufrufen
 
         if(success) {
-            navigate("/customers"); // Bei Erfolg -> zur Kundenübersicht
+            navigate("/dashboard"); // Bei Erfolg -> zur Kundenübersicht
         } else {
             setError("Login fehlgeschlagen. Bitte überprüfe deine Daten");
         }
     };
 
- return (
-        <div
-            style={{
-                minHeight: "100vh",   // volle Höhe des Fensters
-                minWidth: "100vw",    // volle Breite des Fensters
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "#ecf0f1", // hellgrau
-            }}
-        >
-            <div
-                style={{
-                    backgroundColor: "#ecf0f1",
-                    padding: "40px",
-                    borderRadius: "12px",
-                    boxShadow: "0px 4px 12px rgba(0,0,0,0.1)",
-                }}
-            >
-                <h2 style={{ marginBottom: "20px", textAlign: "center", color: "#2c3e50" }}>
-                    ⭐ Furko – Login ⭐
-                </h2>
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-200 px-4">
+      <div className="bg-white p-10 rounded-xl shadow-lg w-full max-w-md">
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-8">
+          ⭐ Furko – Login ⭐
+        </h2>
 
-                <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: "15px", textAlign: "left" }}>
-                        <label style={{ color: "#2c3e50", fontWeight: "bold" }}>Username:</label>
-                        <input
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            style={{
-                                width: "92%",
-                                padding: "10px",
-                                marginTop: "5px",
-                                borderRadius: "6px",
-                                border: "1px solid #ccc",
-                            }}
-                            required
-                        />
-                    </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-semibold mb-2">Username:</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
 
-                    <div style={{ marginBottom: "20px", textAlign: "left" }}>
-                        <label style={{ color: "#2c3e50", fontWeight: "bold" }}>Passwort:</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            style={{
-                                width: "92%",
-                                padding: "10px",
-                                marginTop: "5px",
-                                borderRadius: "6px",
-                                border: "1px solid #ccc",
-                            }}
-                            required
-                        />
-                    </div>
+          <div className="flex flex-col">
+            <label className="text-gray-700 font-semibold mb-2">Passwort:</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
 
-                    <button
-                        type="submit"
-                        style={{
-                            width: "100%",
-                            padding: "12px",
-                            backgroundColor: "#3498db",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: "6px",
-                            cursor: "pointer",
-                            fontWeight: "bold",
-                        }}
-                    >
-                        Login
-                    </button>
-                </form>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-lg transition-transform transform hover:scale-105"
+          >
+            Login
+          </button>
+        </form>
 
-                {error && (
-                    <p style={{ color: "red", marginTop: "15px" }}>{error}</p>
-                )}
-            </div>
-        </div>
-    );
+        {error && (
+          <p className="text-red-500 mt-4 text-center font-medium">{error}</p>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default Login; // Komponente exportieren

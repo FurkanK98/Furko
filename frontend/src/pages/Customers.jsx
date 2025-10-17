@@ -1,259 +1,216 @@
 import React, { useEffect, useState, useContext } from "react";
+import { FaArrowLeft, FaSignOutAlt, FaTrashAlt, FaEdit, FaUser } from "react-icons/fa";
 import api from "../api/api.js";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 const Customers = () => {
-    const {token, logout} = useContext(AuthContext);
-    const [customers, setCustomers] = useState([]); // State: Liste von Kunden
-    const [newCustomer, setNewCustomer] = useState({name:"", email:"", phoneNumber:""});
-    const [editingCustomer, setEditingCustomer] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [message, setMessage] = useState("");
+  const navigate = useNavigate();
+  const { token } = useContext(AuthContext);
+  const [customers, setCustomers] = useState([]);
+  const [newCustomer, setNewCustomer] = useState({ name: "", email: "", phoneNumber: "" });
+  const [editingCustomer, setEditingCustomer] = useState(null);
+  const [message, setMessage] = useState("");
 
-    // Kunden laden beim Start
-    useEffect(() => {
-        const fetchCustomers = async ()  => {
-            if(!token) return;
+  const fetchCustomers = async () => {
+    try {
+      const res = await api.get("/api/customers", { headers: { Authorization: `Bearer ${token}` } });
+      setCustomers(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-            try {
-                const response = await api.get(`/api/customers`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                }); // GET /api/customers
+  useEffect(() => {
+    if (token) fetchCustomers();
+  }, [token]);
 
-                setCustomers(response.data); // Kunden speichern
-            } catch (error) {
-                console.error("Fehler beim Laden der Kunden: ", error);
-                logout(); // Wenn Token ungültig ist, wird Logout erzwungen
-            } finally {
-                setLoading(false);
-            }
-        };
-        if (token) fetchCustomers();
-    }, [token, logout]);
+  const handleAddCustomer = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await api.post("/api/customers", newCustomer, { headers: { Authorization: `Bearer ${token}` } });
+      setCustomers((prev) => [...prev, res.data]);
+      setNewCustomer({ name: "", email: "", phoneNumber: "" });
+      setMessage("✅ Kunde erfolgreich hinzugefügt!");
+    } catch (err) {
+      console.error(err);
+      setMessage("❌ Fehler beim Hinzufügen!");
+    }
+  };
 
-    // Formular abschicken
-    const handleAddCustomer = async (e) => {
-        e.preventDefault();
-        
-        try {
-            const response = await api.post(`/api/customers`, newCustomer, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setCustomers((prev) => [...prev, response.data]);
-            setMessage("Kunde wurde erfolgreich hinzugefügt!");
-            setNewCustomer({name: "", email: "", phoneNumber: ""});
-        } catch (err) {
-            console.error("Fehler beim hinzufügen: ", err);
-            setMessage("Fehler beim hinzufügen!");
-        }
-    };
+  const handleUpdateCustomer = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await api.put(`/api/customers/${editingCustomer.id}`, editingCustomer, { headers: { Authorization: `Bearer ${token}` } });
+      setCustomers((prev) => prev.map((c) => (c.id === editingCustomer.id ? res.data : c)));
+      setEditingCustomer(null);
+      setMessage("✅ Kunde erfolgreich bearbeitet!");
+    } catch (err) {
+      console.error(err);
+      setMessage("❌ Fehler beim Bearbeiten!");
+    }
+  };
 
+  const handleDelete = async (id) => {
+    if (window.confirm("Möchtest du diesen Kunden wirklich löschen?")) {
+      try {
+        await api.delete(`/api/customers/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+        setCustomers(customers.filter((c) => c.id !== id));
+      } catch (err) {
+        console.error(err);
+        setMessage("❌ Fehler beim Löschen!");
+      }
+    }
+  };
 
-    const handleUpdateCustomer = async (e) => {
-        e.preventDefault();
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+  };
 
-        try {
-            const response = await api.put(`/api/customers/${editingCustomer.id}`, editingCustomer, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setCustomers((prev) => prev.map((c) => (c.id === editingCustomer.id ? response.data : c))); // Liste aktualisieren
-            setMessage("Kunde wurde erfolgreich bearbeitet!");
-            setEditingCustomer(null);
-        } catch (err) {
-            console.error("Fehler beim ändern: ", err);
-            setMessage("Fehler beim ändern!");
-        }
-    };
+  const handleBack = () => {
+    navigate("/dashboard");
+  };
 
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200 flex flex-col items-center p-6">
+      {/* Header */}
+      <div className="w-full flex justify-between items-center mb-8">
+        <button onClick={handleBack} className="flex items-center gap-2 text-gray-700 hover:text-blue-700 transition">
+          <FaArrowLeft size={20} />
+          <span className="font-medium">Zurück</span>
+        </button>
 
-    const deleteCustomer = async (id) => {
-        try  {
-            await api.delete(`/api/customers/${id}`, {
-                headers: { Authorization: `Bearer ${token}`}
-            });
-            setCustomers((prev) => prev.filter(c => c.id !== id)); // prev = Komplette Kundenliste anzeigen, bevor er überschrieben wird.
-            setMessage("Kunde wurde erfolgreich gelöscht!");
-        } catch (err) {
-            console.error("Fehler beim löschen: ", err);
-            setMessage("Fehler beim löschen!");
-        }
-    };
+        <h2 className="text-2xl font-bold text-gray-800 text-center flex-1">
+          👤 Kundenübersicht 👤
+        </h2>
 
-    if (!loading) return(
-        <div style={{ minHeight: "100vh", minWidth: "100vw", width:"100%", display: "flex", justifyContent: "center", alignItems: "flex-start", backgroundColor: "#ecf0f1", fontFamily: "Arial, sans-serif"}}>
-            <div 
-                style={{
-                width: "90%",
-                maxWidth: 900,
-                backgroundColor: "#fff",
-                padding: 24,
-                borderRadius: 8,
-                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                position: "center",
-                textAlign: "center",
-                margin: "250px"
-                }}
-            >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-                <h2 style={{ color: "#2c3e50", textAlign: "center", flex: 1 }}>⭐ Kundenübersicht ⭐</h2>
-                <button
-                    onClick={logout}
-                    style={{
-                    padding: "8px 12px",
-                    backgroundColor: "#e74c3c",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: 4,
-                    cursor: "pointer",
-                    }}
-                >
-                    Logout
-                </button>
-                </div>
+        <button onClick={handleLogout} className="flex items-center gap-2 text-gray-700 hover:text-red-600 transition">
+          <span className="font-medium">Logout</span>
+          <FaSignOutAlt size={20} />
+        </button>
+      </div>
 
-        {message && (
-            <p style={{ color: message.startsWith("Kunde") ? "green" : "red", textAlign: "center" }}>{message}</p>
-        )}
-
-        {/* Tabelle */}
-        {customers.length === 0 ? (
-            <p>Keine Kunden gefunden.</p>
-        ) : (
-            <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: 24 }}>
-            <thead>
-                <tr style={{ backgroundColor: "#34495e", color: "#fff" }}>
-                <th style={{ padding: 8, textAlign: "center" }}>ID</th>
-                <th style={{ padding: 8, textAlign: "center" }}>Name</th>
-                <th style={{ padding: 8, textAlign: "center" }}>E-Mail</th>
-                <th style={{ padding: 8, textAlign: "center" }}>Telefon-Nr.</th>
-                <th style={{ padding: 8, textAlign: "center" }}>Aktionen</th>
-                </tr>
-            </thead>
-            <tbody>
-                {customers.map((c) => (
-                console.log(c),
-                <tr key={c.id} style={{ borderBottom: "1px solid #ddd" }}>
-                    <td style={{ color: "#34495e", padding: 8, textAlign: "center" }}>{c.id}</td>
-                    <td style={{ color: "#34495e", padding: 8, textAlign: "center" }}>{c.name}</td>
-                    <td style={{ color: "#34495e", padding: 8, textAlign: "center" }}>{c.email}</td>
-                    <td style={{ color: "#34495e", padding: 8, textAlign: "center" }}>{c.phoneNumber}</td>
-                    <td style={{ color: "#34495e", padding: 8, textAlign: "center" }}>
-                    <button
-                        onClick={() => setEditingCustomer({ ...c })}
-                        style={{
-                        marginRight: 8,
-                        padding: "4px 8px",
-                        backgroundColor: "#f1c40f",
-                        border: "none",
-                        borderRadius: 4,
-                        cursor: "pointer",
-                        }}>Bearbeiten</button>
-                    <button
-                        onClick={() => deleteCustomer(c.id)}
-                        style={{
-                        padding: "4px 8px",
-                        backgroundColor: "#e74c3c",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: 4,
-                        cursor: "pointer",
-                        }}>Löschen</button>
-                    </td>
-                </tr>
-                ))}
-            </tbody>
-            </table>
-        )}
-
-        {/* EIN Formular – nutzt deine Methoden */}
-        <h3>{editingCustomer ? "Kunden bearbeiten" : "Neuen Kunden hinzufügen"}</h3>
-        <form
-            onSubmit={editingCustomer ? handleUpdateCustomer : handleAddCustomer}
-            style={{ marginBottom: 40 }}
-        >
-            <div style={{ marginBottom: 10, color: "#34495e", textAlign: "center" }}>
-            <label>Name</label>
-            <br />
-            <input
-                type="text"
-                value={editingCustomer ? editingCustomer.name : newCustomer.name}
-                onChange={(e) =>
-                editingCustomer
-                    ? setEditingCustomer({ ...editingCustomer, name: e.target.value })
-                    : setNewCustomer({ ...newCustomer, name: e.target.value })
-                }
-                required
-                style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc", textAlign: "center" }}
-            />
-            </div>
-
-            <div style={{ marginBottom: 10, color: "#34495e", textAlign: "center" }}>
-            <label>E-Mail</label>
-            <br />
-            <input
-                type="email"
-                value={editingCustomer ? editingCustomer.email : newCustomer.email}
-                onChange={(e) =>
-                editingCustomer
-                    ? setEditingCustomer({ ...editingCustomer, email: e.target.value })
-                    : setNewCustomer({ ...newCustomer, email: e.target.value })
-                }
-                required
-                style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc", textAlign: "center" }}
-            />
-            </div>
-
-            <div style={{ marginBottom: 10, color: "#34495e", textAlign: "center" }}>
-            <label>Telefon-Nr.</label>
-            <br />
-            <input
-                type="text"
-                value={editingCustomer ? editingCustomer.phoneNumber : newCustomer.phoneNumber}
-                onChange={(e) =>
-                editingCustomer
-                    ? setEditingCustomer({ ...editingCustomer, phoneNumber: e.target.value })
-                    : setNewCustomer({ ...newCustomer, phoneNumber: e.target.value })
-                }
-                required
-                style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc", textAlign: "center" }}
-            />
-            </div>
-
-            <div style={{ textAlign: "center"}}>
-                <button
-                type="submit"
-                style={{
-                    padding: "8px 12px",
-                    backgroundColor: "#2ecc71",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: 4,
-                    cursor: "pointer",
-                }}
-                >
-                {editingCustomer ? "Speichern" : "Hinzufügen"}
-                </button>
-
-                {editingCustomer && (
-                <button
-                    type="button"
-                    onClick={() => setEditingCustomer(null)}
-                    style={{
-                    marginLeft: 10,
-                    padding: "8px 12px",
-                    backgroundColor: "#95a5a6",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: 4,
-                    cursor: "pointer"
-                    }}
-                >
-                    Abbrechen
-                </button>
-            )}
-            </div>
-        </form>
+      {/* Nachricht */}
+      {message && (
+        <div className="mb-4 p-3 bg-white shadow-md rounded-lg text-center text-gray-800 w-full max-w-4xl">
+          {message}
         </div>
+      )}
+
+      {/* Kunden-Tabelle */}
+      <div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-4xl mb-10">
+        <h3 className="text-xl font-semibold text-gray-700 mb-4 flex items-center gap-2">
+          <FaUser className="text-blue-600" />
+          Kunden
+        </h3>
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="bg-blue-100">
+              <th className="p-3 border">ID</th>
+              <th className="p-3 border">Name</th>
+              <th className="p-3 border">E-Mail</th>
+              <th className="p-3 border">Telefon</th>
+              <th className="p-3 border">Aktionen</th>
+            </tr>
+          </thead>
+          <tbody>
+            {customers.length > 0 ? (
+              customers.map((c) => (
+                <tr key={c.id} className="text-center hover:bg-blue-50">
+                  <td className="border p-2">{c.id}</td>
+                  <td className="border p-2">{c.name}</td>
+                  <td className="border p-2">{c.email}</td>
+                  <td className="border p-2">{c.phoneNumber}</td>
+                  <td className="border p-2 flex justify-center gap-2">
+                    <button
+                      onClick={() => setEditingCustomer({ ...c })}
+                      className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded-lg transition-transform transform hover:scale-105"
+                      title="Bearbeiten"
+                    >
+                      <FaEdit />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(c.id)}
+                      className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg transition-transform transform hover:scale-105"
+                      title="Löschen"
+                    >
+                      <FaTrashAlt />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="text-center text-gray-500 py-4">
+                  Keine Kunden vorhanden
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Formular */}
+      <div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-lg">
+        <h3 className="text-xl font-semibold text-gray-700 mb-4 text-center">
+          {editingCustomer ? "Kunden bearbeiten" : "Neuen Kunden hinzufügen"}
+        </h3>
+        <form onSubmit={editingCustomer ? handleUpdateCustomer : handleAddCustomer} className="space-y-4">
+          <input
+            type="text"
+            placeholder="Name"
+            value={editingCustomer ? editingCustomer.name : newCustomer.name}
+            onChange={(e) =>
+              editingCustomer
+                ? setEditingCustomer({ ...editingCustomer, name: e.target.value })
+                : setNewCustomer({ ...newCustomer, name: e.target.value })
+            }
+            required
+            className="w-full p-2 border border-blue-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+          />
+          <input
+            type="email"
+            placeholder="E-Mail"
+            value={editingCustomer ? editingCustomer.email : newCustomer.email}
+            onChange={(e) =>
+              editingCustomer
+                ? setEditingCustomer({ ...editingCustomer, email: e.target.value })
+                : setNewCustomer({ ...newCustomer, email: e.target.value })
+            }
+            required
+            className="w-full p-2 border border-blue-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+          />
+          <input
+            type="text"
+            placeholder="Telefon"
+            value={editingCustomer ? editingCustomer.phoneNumber : newCustomer.phoneNumber}
+            onChange={(e) =>
+              editingCustomer
+                ? setEditingCustomer({ ...editingCustomer, phoneNumber: e.target.value })
+                : setNewCustomer({ ...newCustomer, phoneNumber: e.target.value })
+            }
+            required
+            className="w-full p-2 border border-blue-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+          />
+<div className="flex justify-center gap-4 mt-4">
+  <button
+    type="submit"
+    className={`${ editingCustomer ? "flex-1" : "w-full"} w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition`}> {editingCustomer ? "Speichern" : "Kunden anlegen"}
+  </button>
+
+  {editingCustomer && (
+    <button
+      type="button"
+      onClick={() => setEditingCustomer(null)}
+      className="flex-1 bg-gray-400 hover:bg-gray-500 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+    >
+      Abbrechen
+    </button>
+  )}
+</div>
+        </form>
+      </div>
     </div>
   );
 };
