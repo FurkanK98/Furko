@@ -17,7 +17,7 @@ services: # Container, die gestartet werden soll
 
   app: # Spring Boot-Container baut das Dockerfile
     build: .
-    container_name: furko-app
+    container_name: backend
     ports:
       - "8080:8080"
     depends_on: # App startet erst, wenn die Datenbank bereit ist
@@ -37,6 +37,14 @@ services: # Container, die gestartet werden soll
       - "5050:80"
     depends_on:
       - postgres
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - app
 
 volumes: # Datenbank-Daten bleiben erhalten, selbst, wenn der Container gelöscht wird
   postgres-data:
